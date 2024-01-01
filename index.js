@@ -4,13 +4,14 @@ import dbConnect  from "./config/dbConfig.js";
 import dotenv from "dotenv";
 import authRouter from "./routes/authRouter.js"
 import errorHandler from "./middleware/errorHandler.js";
-
+import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT || 4000;
 dbConnect();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 
 

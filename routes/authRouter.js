@@ -12,6 +12,8 @@ router.delete('/delete',middleware.authMiddleware,userCtrl.deleteUserById)
 router.put('/update',middleware.authMiddleware,userCtrl.updateUser)
 router.put('/block/:id',middleware.authMiddleware,middleware.isAdmin,userCtrl.blockUser)
 router.put('/unblock/:id',middleware.authMiddleware,middleware.isAdmin,userCtrl.unblockUser)
+router.get('/refresh',userCtrl.handleRefreshToken)
+router.get('/logout',userCtrl.logout)
 
 
 export default router;
