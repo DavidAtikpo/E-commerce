@@ -14,6 +14,7 @@ router.put('/block/:id',middleware.authMiddleware,middleware.isAdmin,userCtrl.bl
 router.put('/unblock/:id',middleware.authMiddleware,middleware.isAdmin,userCtrl.unblockUser)
 router.get('/refresh',userCtrl.handleRefreshToken)
 router.get('/logout',userCtrl.logout)
-
+router.put('/password',middleware.authMiddleware,userCtrl.updatePassword),
+router.post('/reset-password',userCtrl.forgotPassword)
 
 export default router;

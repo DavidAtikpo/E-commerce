@@ -4,6 +4,9 @@ import asyncHandler from "express-async-handler"
 import validateMongoDbId from "../utils/validateMongodbid.js"
 import generateRefreshToken from "../config/refreshToken.js";
 import jwt  from "jsonwebtoken";
+import crypto from "crypto"
+import emailCtrl from "./emailCtrl.js";
+
 
 //register User
 const createUser =asyncHandler(async(req,res)=>{
@@ -189,5 +192,43 @@ res.clearCookie("refreshToken",{
 res.json("logout successfully")// forbidden
   });
 
+  const updatePassword= asyncHandler(async(req,res)=>{
+    const {_id}= req.user;
+    const {password}= req.body;
+    validateMongoDbId(_id);
+    const user = await User.findById(_id);
+    if(password){
+      user.password = password;
+      const updatePassword= await user.save();
+      res.json(updatePassword);
+    }else{
+      res.json(user)
+    }
+  });
 
-export default {createUser,loginUserCtrl,getAllUser,getUserById,deleteUserById,updateUser,blockUser,unblockUser,handleRefreshToken,logout};
+  const forgotPassword = asyncHandler(async(req,res)=>{
+const email = req.body;
+const user= await User. findOne (email);
+if(!user) throw new Error("User not found with this email");
+
+try {
+  const token= await user.createPasswordResetToken();
+  await user.save();
+  const resetURL = `Hi Please follow this link to reset your password. this link is valid till 10 minutes from now. <a href="http://localhost:5000/api/user/reset-password/${token}">Click here</>`;
+
+  const data = {
+    to:email,
+    text:"Hey Uer",
+    subject:"Forgot Password Link",
+    html:resetURL
+  };
+  emailCtrl(data);
+  res.json(token);
+
+} catch (error) {
+  throw new Error(error);
+}
+  })
+
+
+export default {createUser,loginUserCtrl,getAllUser,getUserById,deleteUserById,updateUser,blockUser,unblockUser,handleRefreshToken,logout,updatePassword,forgotPassword};
