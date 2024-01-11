@@ -9,8 +9,8 @@ const sendEmail = asyncHandler(async(data, req, res)=>{
     secure: false,
     auth: {
       // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-      user: "maximnyansa75@gmail.com",
-      pass: "uqpo lean remu tzjb",
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
     },
   });
  
