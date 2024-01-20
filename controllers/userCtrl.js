@@ -5,7 +5,7 @@ import validateMongoDbId from "../utils/validateMongodbid.js"
 import generateRefreshToken from "../config/refreshToken.js";
 import jwt  from "jsonwebtoken";
 import crypto from "crypto"
-import emailCtrl from "./emailCtrl.js";
+import sendEmail from "./emailCtrl.js";
 
 
 //register User
@@ -206,29 +206,54 @@ res.json("logout successfully")// forbidden
     }
   });
 
-  const forgotPassword = asyncHandler(async(req,res)=>{
-const email = req.body;
-const user= await User. findOne (email);
-if(!user) throw new Error("User not found with this email");
-
-try {
-  const token= await user.createPasswordResetToken();
+  const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+  
+    // Search for the user by email
+    const user = await User.findOne({ email });
+  
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found with this email' });
+      return;
+    }
+  
+    try {
+      const token = await user.createPasswordResetToken();
+      await user.save();
+      const resetURL = `Hi, please follow this link to reset your password. This link is valid until 10 minutes from now. <a href="http://localhost:5000/api/user/reset-password/${token}">Click here</a>`;
+  
+      const data = {
+        to: email,
+        text: 'Hey User',
+        subject: 'Forgot Password Link',
+        html: resetURL,
+      };
+  
+      // Pass the 'res' object to the sendEmail function
+      await sendEmail(data, res);
+  
+      res.status(200).json({ success: true, message: 'Password reset link sent successfully' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ success: false, message: 'Failed to send email' });
+    }
+  });
+  // reset password 
+  const resetPassword = asyncHandler(async(req,res)=>{
+    const {password}= req.body;
+    const {token} = req.params;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await User.findOne({
+      passwordResetToken:hashedToken,
+      passwordResetExpires:{$gt:Date.now()},
+    });
+    if(!user) throw new Error("Token Expired Please try again later")
+    user.password.password;
+  user.passwordResetToken= undefined;
+  user.passwordResetExpires= undefined;
   await user.save();
-  const resetURL = `Hi Please follow this link to reset your password. this link is valid till 10 minutes from now. <a href="http://localhost:5000/api/user/reset-password/${token}">Click here</>`;
-
-  const data = {
-    to:email,
-    text:"Hey Uer",
-    subject:"Forgot Password Link",
-    html:resetURL
-  };
-  emailCtrl(data);
-  res.json(token);
-
-} catch (error) {
-  throw new Error(error);
-}
+  res.json(user);
   })
 
 
-export default {createUser,loginUserCtrl,getAllUser,getUserById,deleteUserById,updateUser,blockUser,unblockUser,handleRefreshToken,logout,updatePassword,forgotPassword};
+export default {createUser,loginUserCtrl,getAllUser,getUserById,deleteUserById,updateUser,blockUser,unblockUser,handleRefreshToken,logout,updatePassword,forgotPassword,resetPassword};

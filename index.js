@@ -7,6 +7,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import cookieParser from "cookie-parser";
 import productRouter from "./routes/productRouter.js"
 import morgan from "morgan";
+import blogRoute from "./routes/blogRoute.js"
 
 
 const app = express();
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser())
 
 
-
+app.use("/api/blog",blogRoute)
 app.use("/api/user",authRouter)
 app.use("/api/product",productRouter)
 app.use("/", (req, res) => {

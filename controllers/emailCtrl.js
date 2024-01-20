@@ -1,39 +1,32 @@
-import  nodemailer from "nodemailer"
-import asyncHandler from "express-async-handler"
+import nodemailer from 'nodemailer';
+import asyncHandler from 'express-async-handler';
 
-const sendEmail = asyncHandler(async(data, req, res)=>{
-  
+const sendEmail = asyncHandler(async (data, res) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: 'smtp.gmail.com',
     port: 465,
-    secure: false,
+    secure: true,
     auth: {
-      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
       user: process.env.EMAIL,
       pass: process.env.PASSWORD,
     },
   });
- 
-  // async..await is not allowed in global scope, must use a wrapper
-  async function main() {
-    try {
-      // send mail with defined transport object
-      const info = await transporter.sendMail({
-        from: '"Hey 👻" <maximnyansa75@gmail.com>', // Fix the missing '<' in the from address
-        to: data.email,
-        subject: data.subject,
-        text: data.text,
-        html: data.html,
-      });
-      console.log("Email sent:", info);
-    } catch (error) {
-      console.error("Error sending email:", error);
-    }
-  }
-  
-  
-  main().catch(console.error);
-  
 
-})
-export default sendEmail
+  try {
+    // send mail with defined transport object
+    const info = await transporter.sendMail({
+      from: `"Hey 👻" <${process.env.EMAIL}>`,
+      to: data.to,
+      subject: data.subject,
+      text: data.text,
+      html: data.html,
+    });
+    console.log('Email sent:', info);
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email' });
+  }
+});
+
+export default sendEmail;
