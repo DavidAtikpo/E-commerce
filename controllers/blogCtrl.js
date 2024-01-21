@@ -93,7 +93,7 @@ const deleteBlog = asyncHandler(async(req,res) => {
                },
                {new:true}
             );
-            res.json(blog);
+            res.json(blog);``
       }else{
         const blog = await Blog.findByIdAndUpdate(blogId,
             {
