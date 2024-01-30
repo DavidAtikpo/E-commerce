@@ -17,15 +17,15 @@ const blogSchema = new mongoose.Schema({
     type:Number,
     default:0,
  },
- isLike:{
+ isLiked:{
     type:Boolean,
     default:false,
  },
- isDislike:{
+ isDisliked:{
 type:Boolean,
 default:false,
  },
- Likes:[{type: mongoose.Schema.Types.ObjectId,
+ likes:[{type: mongoose.Schema.Types.ObjectId,
 ref: "User"
 },],
 image:{

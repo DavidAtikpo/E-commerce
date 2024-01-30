@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 import productRouter from "./routes/productRouter.js"
 import morgan from "morgan";
 import blogRoute from "./routes/blogRoute.js"
+import prodcategoryRoute from "./routes/prodcategoryRoute.js"
+import blogCatRoute from "./routes/blogCatRoute.js"
 
 
 const app = express();
@@ -21,6 +23,8 @@ app.use(cookieParser())
 
 
 app.use("/api/blog",blogRoute)
+app.use("/api/prodcategory",prodcategoryRoute)
+app.use("/api/blogcategory",blogCatRoute)
 app.use("/api/user",authRouter)
 app.use("/api/product",productRouter)
 app.use("/", (req, res) => {

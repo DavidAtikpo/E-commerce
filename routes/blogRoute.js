@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post("/",authMiddleware.authMiddleware,blogCtrl.createBlog)
 router.put("/Likes",authMiddleware.authMiddleware,blogCtrl.likeBlogs)
+router.put("/Dislikes",authMiddleware.authMiddleware,blogCtrl.dislikeBlogs)
 router.put("/:id",authMiddleware.authMiddleware,blogCtrl.updateBlog)
 router.get("/:id",authMiddleware.authMiddleware,blogCtrl.getBlog)
 router.get("/",authMiddleware.authMiddleware,blogCtrl.getAllBlogs)

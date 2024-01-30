@@ -51,6 +51,7 @@ const loginUserCtrl = asyncHandler(async(req,res)=>{
 // get all Users
 
 const getAllUser = asyncHandler(async(req,res)=>{
+  
   try {
     const getUsers = await User.find()
     res.json(getUsers)
